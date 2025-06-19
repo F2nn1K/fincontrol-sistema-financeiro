@@ -155,8 +155,6 @@ function inicializarCartoes() {
 // Carrega os cartões da API
 async function carregarCartoes() {
   try {
-    console.log('🔄 Carregando cartões...');
-    
     // Verificar se a função existe no objeto api
     if (typeof api.obterCartoes !== 'function') {
       console.error('❌ Função api.obterCartoes não está disponível');
@@ -165,7 +163,6 @@ async function carregarCartoes() {
     
     // Obter cartões da API
     const data = await api.obterCartoes();
-    console.log('📋 Cartões recebidos da API:', data);
     
     // Atualizar variáveis globais
     cartoes = data;
@@ -175,9 +172,6 @@ async function carregarCartoes() {
     cartoes.forEach(cartao => {
       cartoesMap[cartao.id] = cartao;
     });
-    
-    console.log('📊 Total de cartões carregados:', cartoes.length);
-    console.log('🗺️ Mapa de cartões:', Object.keys(cartoesMap));
     
     // Renderizar na interface
     renderizarCartoes();
@@ -195,22 +189,17 @@ async function carregarCartoes() {
 
 // Renderiza os cartões na interface
 function renderizarCartoes() {
-  console.log('🎨 Renderizando cartões na interface...');
-  
   const container = document.getElementById('cartoes-container');
   if (!container) {
     console.error('❌ Container cartoes-container não encontrado!');
     return;
   }
   
-  console.log('📦 Container encontrado:', container);
-  
   // Limpar container
   container.innerHTML = '';
   
   // Se não há cartões, mostrar mensagem
   if (!cartoes || cartoes.length === 0) {
-    console.log('⚠️ Nenhum cartão para renderizar');
     container.innerHTML = `
       <div class="col-12">
         <div class="alert alert-info text-center">
@@ -220,8 +209,6 @@ function renderizarCartoes() {
     `;
     return;
   }
-  
-  console.log('✅ Renderizando', cartoes.length, 'cartões');
   
   // Renderizar cada cartão
   cartoes.forEach(cartao => {
