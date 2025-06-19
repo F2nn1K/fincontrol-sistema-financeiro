@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Gestão Financeira</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="bi bi-coin me-2"></i>
+        FinControl
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="#" data-page="dashboard">
+              <i class="bi bi-speedometer2 me-1"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-page="transacoes">
+              <i class="bi bi-arrow-left-right me-1"></i> Transações
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-page="categorias">
+              <i class="bi bi-tags me-1"></i> Categorias
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-page="cartoes">
+              <i class="bi bi-credit-card me-1"></i> Cartões
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-page="relatorios">
+              <i class="bi bi-graph-up me-1"></i> Relatórios
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container my-4">
+    <!-- Dashboard (Página Inicial) -->
+    <div id="dashboard-page" class="page">
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fs-3 fw-bold mb-0">Dashboard</h2>
+            <div class="btn-group">
+              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#transacaoModal">
+                <i class="bi bi-plus-circle me-1"></i> Nova Transação
+              </button>
+            </div>
+          </div>
+          
+          <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+            <div class="col">
+              <div class="card h-100 resumo-card entrada">
+                <div class="card-body">
+                  <div class="icone"><i class="bi bi-arrow-down-circle"></i></div>
+                  <h5 class="titulo">Entradas</h5>
+                  <p class="valor" id="resumo-entradas">R$ 0,00</p>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 resumo-card saida">
+                <div class="card-body">
+                  <div class="icone"><i class="bi bi-arrow-up-circle"></i></div>
+                  <h5 class="titulo">Saídas</h5>
+                  <p class="valor" id="resumo-saidas">R$ 0,00</p>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 resumo-card saldo">
+                <div class="card-body">
+                  <div class="icone"><i class="bi bi-wallet2"></i></div>
+                  <h5 class="titulo">Saldo</h5>
+                  <p class="valor" id="resumo-saldo">R$ 0,00</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Alertas de Contas a Pagar -->
+          <div class="card mb-4" id="alertas-container">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">
+                <i class="bi bi-bell me-2"></i> Alertas
+              </h5>
+              <span class="badge bg-danger" id="contador-alertas">0</span>
+            </div>
+            <div class="card-body p-0">
+              <ul class="list-group list-group-flush" id="lista-alertas">
+                <!-- Alertas serão inseridos aqui via JavaScript -->
+                <li class="list-group-item text-center text-muted py-4" id="sem-alertas">
+                  <i class="bi bi-check-circle fs-4 d-block mb-2"></i>
+                  Nenhum alerta pendente!
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Últimas Transações</h5>
+              <a href="#" class="btn btn-sm btn-outline-primary" data-page="transacoes">Ver todas</a>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover" id="ultimas-transacoes">
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Descrição</th>
+                      <th>Categoria</th>
+                      <th>Valor</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Será preenchido pelo JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 graph-card">
+            <div class="card-header">
+              <ul class="nav nav-tabs card-header-tabs" id="grafico-tabs">
+                <li class="nav-item">
+                  <a class="nav-link active" href="#" data-tipo="despesas">
+                    <i class="bi bi-graph-down me-1"></i> Despesas
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#" data-tipo="receitas">
+                    <i class="bi bi-graph-up me-1"></i> Receitas
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="grafico-categorias" style="height: 100%; width: 100%;"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transações -->
+    <div id="transacoes-page" class="page d-none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fs-3 fw-bold mb-0">Transações</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#transacaoModal">
+          <i class="bi bi-plus-circle me-1"></i> Nova Transação
+        </button>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header bg-white">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                  <i class="bi bi-funnel"></i>
+                </span>
+                <select id="filtro-tipo" class="form-select border-start-0">
+                  <option value="">Todos os tipos</option>
+                  <option value="entrada">Entradas</option>
+                  <option value="saida">Saídas</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                  <i class="bi bi-tag"></i>
+                </span>
+                <select id="filtro-categoria" class="form-select border-start-0">
+                  <option value="">Todas as categorias</option>
+                  <!-- Será preenchido pelo JavaScript -->
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                  <i class="bi bi-search"></i>
+                </span>
+                <input type="search" id="filtro-descricao" class="form-control border-start-0" placeholder="Buscar...">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" id="tabela-transacoes">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Descrição</th>
+                  <th>Categoria</th>
+                  <th>Valor</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Será preenchido pelo JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categorias -->
+    <div id="categorias-page" class="page d-none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fs-3 fw-bold mb-0">Categorias</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#categoriaModal">
+          <i class="bi bi-plus-circle me-1"></i> Nova Categoria
+        </button>
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-header d-flex align-items-center">
+              <i class="bi bi-arrow-down-circle text-success me-2"></i>
+              <h5 class="mb-0">Categorias de Entrada</h5>
+            </div>
+            <div class="card-body">
+              <ul class="list-group" id="lista-categorias-entrada">
+                <!-- Será preenchido pelo JavaScript -->
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-header d-flex align-items-center">
+              <i class="bi bi-arrow-up-circle text-danger me-2"></i>
+              <h5 class="mb-0">Categorias de Saída</h5>
+            </div>
+            <div class="card-body">
+              <ul class="list-group" id="lista-categorias-saida">
+                <!-- Será preenchido pelo JavaScript -->
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Relatórios -->
+    <div id="relatorios-page" class="page d-none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fs-3 fw-bold mb-0">Relatórios</h2>
+        <div class="btn-group shadow-sm">
+          <button type="button" class="btn btn-light" id="btn-imprimir">
+            <i class="bi bi-printer me-1"></i> Imprimir
+          </button>
+          <button type="button" class="btn btn-light" id="btn-exportar">
+            <i class="bi bi-download me-1"></i> Exportar
+          </button>
+        </div>
+      </div>
+      
+      <div class="card mb-4">
+        <div class="card-header bg-white">
+          <div class="row g-3">
+            <div class="col-md-5">
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">De</span>
+                <input type="date" id="data-inicio" class="form-control border-start-0">
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">Até</span>
+                <input type="date" id="data-fim" class="form-control border-start-0">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-primary w-100" id="btn-filtrar">
+                <i class="bi bi-funnel-fill me-1"></i> Filtrar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-12 mb-4">
+          <div class="card graph-card">
+            <div class="card-header d-flex align-items-center">
+              <i class="bi bi-bar-chart-line me-2"></i>
+              <h5 class="mb-0">Fluxo de Caixa Mensal</h5>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="grafico-fluxo-caixa" style="height: 100%; width: 100%;"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 graph-card">
+            <div class="card-header d-flex align-items-center">
+              <i class="bi bi-pie-chart-fill text-danger me-2"></i>
+              <h5 class="mb-0">Despesas por Categoria</h5>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="grafico-despesas" style="height: 100%; width: 100%;"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 graph-card">
+            <div class="card-header d-flex align-items-center">
+              <i class="bi bi-pie-chart-fill text-success me-2"></i>
+              <h5 class="mb-0">Receitas por Categoria</h5>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="grafico-receitas" style="height: 100%; width: 100%;"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cartões de Crédito -->
+    <div id="cartoes-page" class="page d-none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fs-3 fw-bold mb-0">Cartões de Crédito</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#cartaoModal">
+          <i class="bi bi-plus-circle me-1"></i> Novo Cartão
+        </button>
+      </div>
+
+      <div class="row" id="cartoes-container">
+        <!-- Cartões serão inseridos aqui via JavaScript -->
+        <div class="col-12 text-center py-5 text-muted" id="sem-cartoes">
+          <i class="bi bi-credit-card fs-1 mb-3 d-block"></i>
+          <p>Nenhum cartão de crédito cadastrado.</p>
+          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#cartaoModal">
+            <i class="bi bi-plus-circle me-1"></i> Adicionar Cartão
+          </button>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-12 mb-4">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Detalhamento de Parcelas</h5>
+              <div class="btn-group">
+                <select class="form-select form-select-sm" id="filtro-cartao">
+                  <option value="">Todos os cartões</option>
+                  <!-- Opções serão inseridas via JavaScript -->
+                </select>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <table class="table table-hover mb-0" id="tabela-parcelas">
+                <thead>
+                  <tr>
+                    <th>Descrição</th>
+                    <th>Cartão</th>
+                    <th>Valor da Parcela</th>
+                    <th>Parcela</th>
+                    <th>Vencimento</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Parcelas serão inseridas aqui via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal de Transação -->
+  <div class="modal fade" id="transacaoModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="transacaoModalLabel">Nova Transação</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="transacao-form" autocomplete="off">
+            <input type="hidden" id="transacao-id">
+            <div class="mb-3">
+              <label for="transacao-descricao" class="form-label">Descrição</label>
+              <input type="text" class="form-control" id="transacao-descricao" required autocomplete="off">
+            </div>
+            <div class="mb-3">
+              <label for="transacao-valor" class="form-label">Valor</label>
+              <div class="input-group">
+                <span class="input-group-text">R$</span>
+                <input type="text" class="form-control" id="transacao-valor" placeholder="0,00" required autocomplete="off">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="transacao-tipo" class="form-label">Tipo</label>
+              <div class="d-flex">
+                <div class="form-check form-check-inline flex-grow-1">
+                  <input class="form-check-input" type="radio" name="transacao-tipo-radio" id="tipo-entrada" value="entrada" checked>
+                  <label class="form-check-label" for="tipo-entrada">
+                    <i class="bi bi-arrow-down-circle text-success me-1"></i> Entrada
+                  </label>
+                </div>
+                <div class="form-check form-check-inline flex-grow-1">
+                  <input class="form-check-input" type="radio" name="transacao-tipo-radio" id="tipo-saida" value="saida">
+                  <label class="form-check-label" for="tipo-saida">
+                    <i class="bi bi-arrow-up-circle text-danger me-1"></i> Saída
+                  </label>
+                </div>
+              </div>
+              <select class="form-select d-none" id="transacao-tipo" required>
+                <option value="entrada">Entrada</option>
+                <option value="saida">Saída</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="transacao-categoria" class="form-label">Categoria</label>
+              <select class="form-select" id="transacao-categoria" required>
+                <option value="">Selecione uma categoria</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="transacao-data" class="form-label">Data</label>
+              <input type="date" class="form-control" id="transacao-data" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelar-transacao">Cancelar</button>
+          <button type="button" id="salvarTransacaoBtn" class="btn btn-primary" onclick="transacoesModule.salvarTransacaoAgora()">
+            <i class="bi bi-check-circle me-1"></i> Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Categoria -->
+  <div class="modal fade" id="categoriaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="categoriaModalLabel">Nova Categoria</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="categoria-form">
+            <input type="hidden" id="categoria-id">
+            <div class="mb-3">
+              <label for="categoria-nome" class="form-label">Nome</label>
+              <input type="text" class="form-control" id="categoria-nome" required>
+            </div>
+            <div class="mb-3">
+              <label for="categoria-tipo" class="form-label">Tipo</label>
+              <div class="d-flex">
+                <div class="form-check form-check-inline flex-grow-1">
+                  <input class="form-check-input" type="radio" name="categoria-tipo-radio" id="categoria-tipo-entrada" value="entrada" checked>
+                  <label class="form-check-label" for="categoria-tipo-entrada">
+                    <i class="bi bi-arrow-down-circle text-success me-1"></i> Entrada
+                  </label>
+                </div>
+                <div class="form-check form-check-inline flex-grow-1">
+                  <input class="form-check-input" type="radio" name="categoria-tipo-radio" id="categoria-tipo-saida" value="saida">
+                  <label class="form-check-label" for="categoria-tipo-saida">
+                    <i class="bi bi-arrow-up-circle text-danger me-1"></i> Saída
+                  </label>
+                </div>
+              </div>
+              <select class="form-select d-none" id="categoria-tipo" required>
+                <option value="entrada">Entrada</option>
+                <option value="saida">Saída</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="salvar-categoria" onclick="salvarCategoria()">
+            <i class="bi bi-check-circle me-1"></i> Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmação -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" data-bs-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmação</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <p id="confirm-message"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancel-button" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" id="confirm-button">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Cartão de Crédito -->
+  <div class="modal fade" id="cartaoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cartaoModalLabel">Novo Cartão de Crédito</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="cartao-form">
+            <input type="hidden" id="cartao-id">
+            <div class="mb-3">
+              <label for="cartao-nome" class="form-label">Nome do Cartão</label>
+              <input type="text" class="form-control" id="cartao-nome" required placeholder="Ex: Nubank Visa" autocomplete="off" tabindex="1">
+            </div>
+            <div class="mb-3">
+              <label for="cartao-limite" class="form-label">Limite</label>
+              <div class="input-group">
+                <span class="input-group-text">R$</span>
+                <input type="number" class="form-control" id="cartao-limite" min="0.01" step="0.01" required autocomplete="off" tabindex="2">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="cartao-fechamento" class="form-label">Dia de Fechamento</label>
+                <input type="number" class="form-control" id="cartao-fechamento" min="1" max="31" required placeholder="Ex: 15" autocomplete="off" tabindex="3">
+              </div>
+              <div class="col-md-6">
+                <label for="cartao-vencimento" class="form-label">Dia de Vencimento</label>
+                <input type="number" class="form-control" id="cartao-vencimento" min="1" max="31" required placeholder="Ex: 22" autocomplete="off" tabindex="4">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="cartao-cor" class="form-label">Cor</label>
+              <div class="d-flex flex-wrap">
+                <div class="form-check me-3">
+                  <input class="form-check-input bg-primary" type="radio" name="cartao-cor" id="cartao-cor-primary" value="primary" checked>
+                  <label class="form-check-label" for="cartao-cor-primary">Azul</label>
+                </div>
+                <div class="form-check me-3">
+                  <input class="form-check-input bg-danger" type="radio" name="cartao-cor" id="cartao-cor-danger" value="danger">
+                  <label class="form-check-label" for="cartao-cor-danger">Vermelho</label>
+                </div>
+                <div class="form-check me-3">
+                  <input class="form-check-input bg-success" type="radio" name="cartao-cor" id="cartao-cor-success" value="success">
+                  <label class="form-check-label" for="cartao-cor-success">Verde</label>
+                </div>
+                <div class="form-check me-3">
+                  <input class="form-check-input bg-info" type="radio" name="cartao-cor" id="cartao-cor-info" value="info">
+                  <label class="form-check-label" for="cartao-cor-info">Azul Claro</label>
+                </div>
+                <div class="form-check me-3">
+                  <input class="form-check-input bg-purple" type="radio" name="cartao-cor" id="cartao-cor-purple" value="purple">
+                  <label class="form-check-label" for="cartao-cor-purple">Roxo</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input bg-dark" type="radio" name="cartao-cor" id="cartao-cor-dark" value="dark">
+                  <label class="form-check-label" for="cartao-cor-dark">Preto</label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="salvar-cartao" onclick="salvarCartao()">
+            <i class="bi bi-check-circle me-1"></i> Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Compra Parcelada -->
+  <div class="modal fade" id="compraParceladaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="compraParceladaModalLabel">Nova Compra no Cartão</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="compra-form">
+            <input type="hidden" id="compra-id">
+            <div class="mb-3">
+              <label for="compra-descricao" class="form-label">Descrição da Compra</label>
+              <input type="text" class="form-control" id="compra-descricao" required placeholder="Ex: Notebook Dell">
+            </div>
+            <div class="mb-3">
+              <label for="compra-valor" class="form-label">Valor Total da Compra</label>
+              <div class="input-group">
+                <span class="input-group-text">R$</span>
+                <input type="number" class="form-control" id="compra-valor" min="0.01" step="0.01" required>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="compra-data" class="form-label">Data da Compra</label>
+                <input type="date" class="form-control" id="compra-data" required>
+              </div>
+              <div class="col-md-6">
+                <label for="compra-parcelas" class="form-label">Número de Parcelas</label>
+                <div class="input-group">
+                  <input type="number" class="form-control" id="compra-parcelas" min="1" max="36" value="1" required>
+                  <span class="input-group-text">vezes</span>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="compra-cartao" class="form-label">Cartão de Crédito</label>
+              <select class="form-select" id="compra-cartao" required>
+                <option value="">Selecione um cartão</option>
+                <!-- Opções serão inseridas via JavaScript -->
+              </select>
+            </div>
+            
+            <!-- Seção de Parcelas Personalizadas (inicialmente oculta) -->
+            <div id="parcelas-personalizadas" class="mb-3" style="display: none;">
+              <div class="card border-primary">
+                <div class="card-header bg-primary bg-opacity-10 border-primary">
+                  <h6 class="mb-0 text-primary">
+                    <i class="bi bi-credit-card me-2"></i>
+                    Valor da Parcela
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col-md-6">
+                      <label for="valor-parcela-unica" class="form-label">Valor de cada parcela</label>
+                      <div class="input-group">
+                        <span class="input-group-text">R$</span>
+                        <input type="number" 
+                               class="form-control" 
+                               id="valor-parcela-unica" 
+                               min="0.01" 
+                               step="0.01" 
+                               placeholder="0,00">
+                      </div>
+                      <small class="text-muted">Este valor será aplicado a todas as parcelas</small>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Total das parcelas:</span>
+                        <span id="total-parcelas-calculado" class="fw-bold">R$ 0,00</span>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <span class="text-muted">Valor original:</span>
+                        <span id="valor-original-compra" class="fw-bold">R$ 0,00</span>
+                      </div>
+                      <div class="mt-2">
+                        <div id="status-parcelas" class="alert alert-info py-2 mb-0" style="display: none;">
+                          <i class="bi bi-info-circle me-1"></i>
+                          <span id="mensagem-status"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" id="salvar-compra">
+            <i class="bi bi-check-circle me-1"></i> Salvar Compra
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/transacoes.js"></script>
+  <script src="js/categorias.js"></script>
+  <script src="js/cartoes.js"></script>
+  <script src="js/relatorios.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- SCRIPT DIRETO PARA RESOLVER AS CATEGORIAS -->
+  <script>
+    // SOLUÇÃO DIRETA - Carregar categorias quando modal abrir
+    document.addEventListener('DOMContentLoaded', function() {
+      const modal = document.getElementById('transacaoModal');
+      
+      if (modal) {
+              modal.addEventListener('shown.bs.modal', async function() {
+        console.log('🔥 CARREGANDO CATEGORIAS DIRETO!');
+        
+        try {
+          // Buscar categorias da API
+          const response = await fetch('/api/categorias');
+          const categorias = await response.json();
+          
+          console.log('📊 Categorias recebidas:', categorias);
+          
+          // Separar por tipo
+          const entrada = categorias.filter(c => c.tipo === 'entrada');
+          const saida = categorias.filter(c => c.tipo === 'saida');
+          
+          console.log('✅ Entrada:', entrada.length, 'Saída:', saida.length);
+          
+          // Preencher dropdown
+          const select = document.getElementById('transacao-categoria');
+          if (select) {
+            // Verificar tipo selecionado
+            const tipoEntrada = document.getElementById('tipo-entrada');
+            const tipoSaida = document.getElementById('tipo-saida');
+            
+            let categoriasUsar = entrada; // padrão
+            if (tipoSaida && tipoSaida.checked) {
+              categoriasUsar = saida;
+            }
+            
+            // Limpar e preencher
+            select.innerHTML = '<option value="">Selecione uma categoria</option>';
+            categoriasUsar.forEach(cat => {
+              const option = document.createElement('option');
+              option.value = cat.id;
+              option.textContent = cat.nome;
+              select.appendChild(option);
+            });
+            
+            console.log('🎉 DROPDOWN PREENCHIDO COM', categoriasUsar.length, 'CATEGORIAS!');
+            
+            // Event listeners para radio buttons
+            if (tipoEntrada) {
+              tipoEntrada.addEventListener('change', function() {
+                if (this.checked) {
+                  select.innerHTML = '<option value="">Selecione uma categoria</option>';
+                  entrada.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.id;
+                    option.textContent = cat.nome;
+                    select.appendChild(option);
+                  });
+                  console.log('🔄 Mudou para ENTRADA');
+                }
+              });
+            }
+            
+            if (tipoSaida) {
+              tipoSaida.addEventListener('change', function() {
+                if (this.checked) {
+                  select.innerHTML = '<option value="">Selecione uma categoria</option>';
+                  saida.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.id;
+                    option.textContent = cat.nome;
+                    select.appendChild(option);
+                  });
+                  console.log('🔄 Mudou para SAÍDA');
+                }
+              });
+            }
+          }
+        } catch (error) {
+          console.error('💥 Erro:', error);
+        }
+      });
+      
+      // FUNÇÃO PARA MOSTRAR ALERTA BONITO DE SUCESSO
+      window.mostrarAlertaSucesso = function(mensagem) {
+        mostrarAlertaCustom(mensagem, 'sucesso');
+      };
+      
+      // FUNÇÃO PARA MOSTRAR ALERTA BONITO DE ERRO
+      window.mostrarAlertaErro = function(mensagem) {
+        mostrarAlertaCustom(mensagem, 'erro');
+      };
+      
+      // FUNÇÃO GENÉRICA PARA ALERTAS
+      function mostrarAlertaCustom(mensagem, tipo) {
+        // Remover alertas anteriores
+        const alertasAnteriores = document.querySelectorAll('.alerta-custom');
+        alertasAnteriores.forEach(alerta => alerta.remove());
+        
+        // Configurações por tipo
+        const configs = {
+          sucesso: {
+            background: 'linear-gradient(135deg, #28a745, #20c997)',
+            icone: 'bi-check-circle-fill',
+            cor: 'white'
+          },
+          erro: {
+            background: 'linear-gradient(135deg, #dc3545, #fd7e14)',
+            icone: 'bi-exclamation-triangle-fill',
+            cor: 'white'
+          }
+        };
+        
+        const config = configs[tipo] || configs.sucesso;
+        
+        // Criar alerta
+        const alerta = document.createElement('div');
+        alerta.className = 'alerta-custom';
+        alerta.innerHTML = `
+          <div style="
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${config.background};
+            color: ${config.cor};
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 9999;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+          ">
+            <i class="bi ${config.icone}" style="font-size: 1.2em;"></i>
+            ${mensagem}
+          </div>
+        `;
+        
+        document.body.appendChild(alerta);
+        
+        // Remover após 4 segundos
+        setTimeout(() => {
+          if (alerta) {
+            alerta.style.animation = 'slideOut 0.3s ease-in';
+            setTimeout(() => alerta.remove(), 300);
+          }
+        }, 4000);
+      }
+      
+      // CSS para animações
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes slideIn {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        
+        @keyframes slideOut {
+          from {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+      
+      // FORMATAÇÃO DE VALOR DIRETA NO HTML
+      setTimeout(() => {
+        const campoValor = document.getElementById('transacao-valor');
+        if (campoValor) {
+          console.log('🎯 Configurando formatação direta no HTML');
+          
+          function formatarValorDireto(e) {
+            const el = e.target;
+            console.log('🔥 Formatando valor direto:', el.value);
+            
+            // Remover tudo que não é dígito
+            let numeros = el.value.replace(/\D/g, '');
+            
+            if (!numeros) {
+              el.value = '';
+              return;
+            }
+            
+            // Converter para centavos e depois reais
+            let valorEmReais = parseInt(numeros) / 100;
+            
+            // Formatar manualmente
+            let formatado = valorEmReais.toFixed(2).replace('.', ',');
+            
+            // Adicionar separadores de milhares
+            let partes = formatado.split(',');
+            partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            formatado = partes.join(',');
+            
+            console.log('✅ Valor formatado direto:', formatado);
+            el.value = formatado;
+            
+            // Cursor no final
+            setTimeout(() => {
+              if (el.setSelectionRange) {
+                el.setSelectionRange(el.value.length, el.value.length);
+              }
+            }, 10);
+          }
+          
+          // Aplicar múltiplos eventos
+          campoValor.addEventListener('input', formatarValorDireto);
+          campoValor.addEventListener('keyup', formatarValorDireto);
+          campoValor.addEventListener('paste', (e) => {
+            setTimeout(() => formatarValorDireto(e), 10);
+          });
+          
+          console.log('✅ Formatação direta configurada');
+        } else {
+          console.error('❌ Campo transacao-valor não encontrado no HTML!');
+        }
+      }, 1000);
+      
+      // FORMATAÇÃO REMOVIDA - DEIXAR USUÁRIO DIGITAR LIVREMENTE
+      console.log('✅ Formatação automática de cartões DESABILITADA - usuário digita livremente');
+      
+      // Função global REMOVIDA - sem formatação automática
+      window.formatarValorCartaoHTML = function(e) {
+        // FUNÇÃO DESABILITADA - usuário digita livremente
+        return;
+      };
+      }
+    });
+  </script>
+</body>
+</html> 
