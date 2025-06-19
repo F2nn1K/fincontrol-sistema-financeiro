@@ -5,6 +5,10 @@
 // URL base da API
 const API_URL = '/api';
 
+// Debug da URL
+console.log('🌐 URL atual:', window.location.href);
+console.log('🔗 API URL:', API_URL);
+
 // Funções de API para transações
 const api = {
   // Método base para requisições fetch com tratamento de erro melhorado
