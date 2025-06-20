@@ -1,7 +1,6 @@
 /**
  * Gerenciamento de relatórios financeiros
  */
-
 // Elementos do DOM
 const resumoEntradas = document.getElementById('resumo-entradas');
 const resumoSaidas = document.getElementById('resumo-saidas');
@@ -13,13 +12,11 @@ const graficoDespesas = document.getElementById('grafico-despesas');
 const graficoReceitas = document.getElementById('grafico-receitas');
 const dataInicio = document.getElementById('data-inicio');
 const dataFim = document.getElementById('data-fim');
-
 // Instâncias de gráficos
 let chartCategorias = null;
 let chartFluxoCaixa = null;
 let chartDespesas = null;
 let chartReceitas = null;
-
 // Variáveis globais
 const cores = [
   'rgba(54, 162, 235, 0.7)',
@@ -33,38 +30,28 @@ const cores = [
   'rgba(40, 159, 64, 0.7)',
   'rgba(210, 199, 199, 0.7)',
 ];
-
 // Transações filtradas para uso em relatórios
 let transacoesFiltradas = [];
-
 // Modo silencioso - remover logs
 if (typeof window.modoDebug === 'undefined') {
   window.modoDebug = false;
 }
-
 // Inicialização
 function inicializarRelatorios() {
-  console.log('Inicializando módulo de relatórios');
-  
   carregarResumo();
   configurarEventListeners();
-  
   // Se estivermos na página de dashboard, carregamos os gráficos
   if (document.getElementById('dashboard-page') && !document.getElementById('dashboard-page').classList.contains('d-none')) {
     atualizarGraficos();
     verificarAlertasContas();
   }
-  
   // Se estivermos na página de relatórios, carregamos os gráficos detalhados
   if (document.getElementById('relatorios-page') && !document.getElementById('relatorios-page').classList.contains('d-none')) {
     carregarGraficosRelatorios();
   }
 }
-
 // Atualiza todos os gráficos com os dados mais recentes
 function atualizarGraficos() {
-  if (window.modoDebug) console.log('Atualizando gráficos com dados mais recentes');
-  
   try {
     // Carregar gráfico de categorias
     carregarGraficoCategorias('despesas'); // Começa mostrando despesas
@@ -73,15 +60,12 @@ function atualizarGraficos() {
     // Não exibir notificação para o usuário, apenas logar no console
   }
 }
-
 // Carrega o resumo financeiro
 async function carregarResumo() {
   if (!resumoEntradas || !resumoSaidas || !resumoSaldo) return;
-  
   try {
     // Usar dados de demonstração se a API falhar
     let resumo = { entradas: 0, saidas: 0, saldo: 0 };
-    
     // Tentar obter dados reais
     try {
       if (typeof api !== 'undefined' && typeof api.obterResumo === 'function') {
@@ -95,11 +79,9 @@ async function carregarResumo() {
           const entradas = window.transacoes
             .filter(t => t.tipo === 'entrada')
             .reduce((sum, t) => sum + Number(t.valor), 0);
-            
           const saidas = window.transacoes
             .filter(t => t.tipo === 'saida')
             .reduce((sum, t) => sum + Number(t.valor), 0);
-            
           resumo = {
             entradas,
             saidas,
@@ -118,12 +100,10 @@ async function carregarResumo() {
       console.error('Erro ao obter resumo da API:', error);
       // Manter valores padrão
     }
-    
     // Atualizar elementos na tela
     resumoEntradas.textContent = formatarMoeda(resumo.entradas);
     resumoSaidas.textContent = formatarMoeda(resumo.saidas);
     resumoSaldo.textContent = formatarMoeda(resumo.saldo);
-    
     // Alterar cor do saldo de acordo com valor positivo ou negativo
     if (resumo.saldo < 0) {
       resumoSaldo.classList.remove('text-primary');
@@ -144,26 +124,19 @@ async function carregarResumo() {
     }
   }
 }
-
 /**
  * Carrega o gráfico de categorias para o tipo especificado
  * @param {string} tipo - Tipo de transação (despesas ou receitas)
  */
 async function carregarGraficoCategorias(tipo) {
   try {
-    if (window.modoDebug) console.log(`Carregando gráfico de categorias para: ${tipo}`);
-    
     // Dicionário de tipo interno para tipo de API
     const tipoInterno = tipo === 'despesas' ? 'saida' : 'entrada';
-    
     // Buscar transações na tabela do DOM
     const tabela = document.getElementById('ultimas-transacoes');
     let dados = [];
-    
     if (tabela) {
       const linhas = tabela.querySelectorAll('tbody tr');
-      if (window.modoDebug) console.log(`Encontradas ${linhas.length} linhas na tabela de últimas transações`);
-      
       if (linhas.length > 0) {
         // Extrair dados da tabela
         const transacoes = Array.from(linhas).map(linha => {
@@ -180,13 +153,9 @@ async function carregarGraficoCategorias(tipo) {
           }
           return null;
         }).filter(t => t !== null);
-        
-        if (window.modoDebug) console.log('Transações extraídas da tabela DOM:', transacoes);
-        
         if (transacoes.length > 0) {
           dados = processarDadosParaGrafico(transacoes, tipoInterno);
           if (dados.length > 0) {
-            if (window.modoDebug) console.log('Usando dados da tabela DOM para o gráfico');
             const dadosLimitados = prepararDadosGrafico(dados);
             criarGrafico(dadosLimitados, tipo);
             return; // Retornar após criar o gráfico com dados da tabela
@@ -194,28 +163,23 @@ async function carregarGraficoCategorias(tipo) {
         }
       }
     }
-    
     // Se não encontrou dados na tabela, verificar se temos dados em window.transacoes
     if (window.transacoes && window.transacoes.length > 0) {
       dados = processarDadosParaGrafico(window.transacoes, tipoInterno);
       if (dados.length > 0) {
-        if (window.modoDebug) console.log('Usando dados de window.transacoes para o gráfico');
         const dadosLimitados = prepararDadosGrafico(dados);
         criarGrafico(dadosLimitados, tipo);
         return;
       }
     }
-    
     // Se não encontrou dados, mostrar mensagem vazia
     criarGrafico([], tipo);
-    
   } catch (error) {
     console.error('Erro ao carregar gráfico de categorias:', error);
     // Criar gráfico vazio com mensagem de erro
     criarGrafico([], tipo);
   }
 }
-
 /**
  * Processa dados de transações para o formato usado pelo gráfico
  * @param {Array} transacoes - Array de transações
@@ -224,28 +188,20 @@ async function carregarGraficoCategorias(tipo) {
  */
 function processarDadosParaGrafico(transacoes, tipo) {
   try {
-    if (window.modoDebug) console.log(`Processando ${transacoes.length} transações para o tipo: ${tipo}`);
-    
     // Filtrar por tipo
-    if (window.modoDebug) console.log(`Filtrando transações por tipo: ${tipo}`);
     const transacoesFiltradas = transacoes.filter(t => {
       return t.tipo === tipo || 
              (tipo === 'saida' && t.tipo === 'despesas') || 
              (tipo === 'entrada' && t.tipo === 'receitas');
     });
-    if (window.modoDebug) console.log(`Encontradas ${transacoesFiltradas.length} transações do tipo ${tipo}`);
-    
     if (transacoesFiltradas.length === 0) {
       return [];
     }
-    
     // Agrupar por categoria
     const categorias = {};
-    
     transacoesFiltradas.forEach(transacao => {
       // Obter nome da categoria
       let nomeCategoria = transacao.categoria_nome || 'Sem categoria';
-      
       // Se a transação tem apenas ID da categoria, tentar obter o nome
       if (!nomeCategoria && transacao.categoria && window.categoriaModule) {
         const categoria = window.categoriaModule.obterCategoriaPorId(transacao.categoria);
@@ -253,7 +209,6 @@ function processarDadosParaGrafico(transacoes, tipo) {
           nomeCategoria = categoria.nome;
         }
       }
-      
       // Converter valor para número
       let valor = 0;
       if (typeof transacao.valor === 'number') {
@@ -261,20 +216,14 @@ function processarDadosParaGrafico(transacoes, tipo) {
       } else if (typeof transacao.valor === 'string') {
         valor = parseFloat(transacao.valor.replace(/[^\d,-]/g, '').replace(',', '.'));
       }
-      
       if (!isNaN(valor) && valor > 0) {
         // Adicionar ou somar ao total da categoria
         if (!categorias[nomeCategoria]) {
           categorias[nomeCategoria] = 0;
         }
-        
-        if (window.modoDebug) console.log(`Adicionado ${valor} à categoria '${nomeCategoria}'`);
         categorias[nomeCategoria] += valor;
       }
     });
-    
-    if (window.modoDebug) console.log('Categorias agrupadas:', categorias);
-    
     // Converter para array de objetos com nome e total
     const dadosProcessados = Object.entries(categorias).map(([categoria, valor]) => {
       return {
@@ -282,15 +231,12 @@ function processarDadosParaGrafico(transacoes, tipo) {
         total: valor
       };
     });
-    
-    if (window.modoDebug) console.log('Dados processados:', dadosProcessados);
     return dadosProcessados;
   } catch (error) {
     console.error('Erro ao processar dados para gráfico:', error);
     return [];
   }
 }
-
 /**
  * Prepara os dados para o gráfico, limitando o número de categorias
  * @param {Array} dados - Dados processados
@@ -302,19 +248,14 @@ function prepararDadosGrafico(dados, limite = 5) {
     if (!dados || !Array.isArray(dados) || dados.length === 0) {
       return [];
     }
-    
     // Ordenar os dados por valor (decrescente)
     const dadosOrdenados = [...dados].sort((a, b) => b.total - a.total);
-    if (window.modoDebug) console.log('Dados ordenados para gráfico:', dadosOrdenados);
-    
     // Se houver mais categorias que o limite, agrupar as menores em "Outros"
     if (dadosOrdenados.length > limite) {
       const principaisCategorias = dadosOrdenados.slice(0, limite - 1);
       const outrosCategorias = dadosOrdenados.slice(limite - 1);
-      
       // Calcular o total das outras categorias
       const totalOutros = outrosCategorias.reduce((soma, item) => soma + item.total, 0);
-      
       // Adicionar a categoria "Outros" se tiver valor
       if (totalOutros > 0) {
         principaisCategorias.push({
@@ -322,19 +263,14 @@ function prepararDadosGrafico(dados, limite = 5) {
           total: totalOutros
         });
       }
-      
-      if (window.modoDebug) console.log('Dados limitados para gráfico:', principaisCategorias);
       return principaisCategorias;
     }
-    
-    if (window.modoDebug) console.log('Dados limitados para gráfico:', dadosOrdenados);
     return dadosOrdenados;
   } catch (error) {
     console.error('Erro ao preparar dados para gráfico:', error);
     return dados || []; // Retornar os dados originais em caso de erro
   }
 }
-
 /**
  * Cria um gráfico de categorias com os dados fornecidos
  * @param {Array} dados - Array de objetos com nome da categoria e valor
@@ -345,9 +281,6 @@ function criarGrafico(dados, tipo) {
     // Preparar dados para o gráfico
     const labels = dados.map(item => item.nome);
     const values = dados.map(item => item.total);
-    
-    if (window.modoDebug) console.log('Criando gráfico de categorias com dados:', { labels, values });
-    
     // Cores para o gráfico
     const coresFundo = [
       'rgba(54, 162, 235, 0.8)',
@@ -361,7 +294,6 @@ function criarGrafico(dados, tipo) {
       'rgba(40, 159, 64, 0.8)',
       'rgba(210, 199, 199, 0.8)'
     ];
-    
     const coresBorda = [
       'rgba(54, 162, 235, 1)',
       'rgba(255, 99, 132, 1)',
@@ -374,7 +306,6 @@ function criarGrafico(dados, tipo) {
       'rgba(40, 159, 64, 1)',
       'rgba(210, 199, 199, 1)'
     ];
-    
     // Verificar se dados estão vazios
     if (dados.length === 0) {
       const elemento = document.getElementById('grafico-categorias');
@@ -388,20 +319,16 @@ function criarGrafico(dados, tipo) {
       }
       return;
     }
-    
     // Obter o contexto do canvas
     const ctx = document.getElementById('grafico-categorias');
     if (!ctx) {
       console.error('Elemento "grafico-categorias" não encontrado');
       return; // Sair da função se o elemento não existir
     }
-    
     // Destruir o gráfico existente, se houver
     if (window.graficosCategorias) {
-      console.log('Gráfico anterior destruído');
       window.graficosCategorias.destroy();
     }
-    
     // Criar novo gráfico
     window.graficosCategorias = new Chart(ctx, {
       type: 'pie',
@@ -433,11 +360,8 @@ function criarGrafico(dados, tipo) {
         }
       }
     });
-    
-    if (window.modoDebug) console.log('Gráfico criado com sucesso');
   } catch (error) {
     console.error('Erro ao renderizar gráfico:', error);
-    
     // Tentar mostrar uma mensagem de erro
     const elemento = document.getElementById('grafico-categorias');
     if (elemento) {
@@ -450,45 +374,36 @@ function criarGrafico(dados, tipo) {
     }
   }
 }
-
 // Carrega os gráficos na página de relatórios
 function carregarGraficosRelatorios() {
   const inicio = dataInicio ? dataInicio.value : null;
   const fim = dataFim ? dataFim.value : null;
-  
   carregarGraficoFluxoCaixa();
   carregarGraficoDespesas(inicio, fim);
   carregarGraficoReceitas(inicio, fim);
 }
-
 // Carrega o gráfico de fluxo de caixa mensal
 async function carregarGraficoFluxoCaixa() {
   if (!graficoFluxoCaixa) return;
-  
   try {
     // Gerar dados de demonstração para o gráfico
     const hoje = new Date();
     const ano = hoje.getFullYear();
     const mes = hoje.getMonth() + 1;
-    
     // Gerar 6 meses para trás
     const dados = [];
     for (let i = 0; i < 6; i++) {
       let m = mes - i;
       let a = ano;
-      
       if (m <= 0) {
         m += 12;
         a -= 1;
       }
-      
       const mesStr = m.toString().padStart(2, '0');
-      
       // Valores simulados
       const entradas = 3500 + Math.floor(Math.random() * 1000);
       const saidas = 2500 + Math.floor(Math.random() * 800);
       const saldo = entradas - saidas;
-      
       dados.unshift({
         mes: `${a}-${mesStr}`,
         entradas,
@@ -496,22 +411,18 @@ async function carregarGraficoFluxoCaixa() {
         saldo
       });
     }
-    
     // Preparar dados para o gráfico
     const labels = dados.map(item => {
       const [ano, mes] = item.mes.split('-');
       return `${mes}/${ano}`;
     });
-    
     const entradas = dados.map(item => item.entradas);
     const saidas = dados.map(item => item.saidas);
     const saldo = dados.map(item => item.saldo);
-    
     // Destruir gráfico existente se houver
     if (chartFluxoCaixa) {
       chartFluxoCaixa.destroy();
     }
-    
     // Criar novo gráfico
     const ctx = graficoFluxoCaixa.getContext('2d');
     chartFluxoCaixa = new Chart(ctx, {
@@ -573,27 +484,21 @@ async function carregarGraficoFluxoCaixa() {
     // Silenciar erro - o gráfico simplesmente não será exibido
   }
 }
-
 // Carrega o gráfico de despesas por categoria
 async function carregarGraficoDespesas(dataInicio, dataFim) {
   if (!graficoDespesas) return;
-  
   try {
     // Obter dados
     const dados = await api.obterDespesasPorCategoria(dataInicio, dataFim);
-    
     // Ordenar dados pelo valor
     dados.sort((a, b) => b.total - a.total);
-    
     // Preparar dados para o gráfico
     const labels = dados.map(item => item.nome);
     const values = dados.map(item => item.total);
-    
     // Destruir gráfico existente se houver
     if (chartDespesas) {
       chartDespesas.destroy();
     }
-    
     // Criar novo gráfico
     const ctx = graficoDespesas.getContext('2d');
     chartDespesas = new Chart(ctx, {
@@ -628,27 +533,21 @@ async function carregarGraficoDespesas(dataInicio, dataFim) {
     // Silenciar erro - o gráfico simplesmente não será exibido
   }
 }
-
 // Carrega o gráfico de receitas por categoria
 async function carregarGraficoReceitas(dataInicio, dataFim) {
   if (!graficoReceitas) return;
-  
   try {
     // Obter dados
     const dados = await api.obterReceitasPorCategoria(dataInicio, dataFim);
-    
     // Ordenar dados pelo valor
     dados.sort((a, b) => b.total - a.total);
-    
     // Preparar dados para o gráfico
     const labels = dados.map(item => item.nome);
     const values = dados.map(item => item.total);
-    
     // Destruir gráfico existente se houver
     if (chartReceitas) {
       chartReceitas.destroy();
     }
-    
     // Criar novo gráfico
     const ctx = graficoReceitas.getContext('2d');
     chartReceitas = new Chart(ctx, {
@@ -683,52 +582,42 @@ async function carregarGraficoReceitas(dataInicio, dataFim) {
     // Silenciar erro - o gráfico simplesmente não será exibido
   }
 }
-
 // Configura event listeners
 function configurarEventListeners() {
   // Alternar entre gráficos de despesas e receitas no dashboard
   if (graficoTabs) {
     const tabs = graficoTabs.querySelectorAll('.nav-link');
-    
     tabs.forEach(tab => {
       tab.addEventListener('click', (e) => {
         e.preventDefault();
-        
         // Remover classe active de todas as tabs
         tabs.forEach(t => t.classList.remove('active'));
-        
         // Adicionar classe active à tab clicada
         tab.classList.add('active');
-        
         // Carregar o gráfico correspondente
         carregarGraficoCategorias(tab.dataset.tipo);
       });
     });
   }
-  
   // Filtrar relatórios por data
   if (dataInicio && dataFim) {
     const atualizarRelatorios = () => {
       const inicio = dataInicio.value;
       const fim = dataFim.value;
-      
       carregarResumo(inicio, fim);
       carregarGraficoDespesas(inicio, fim);
       carregarGraficoReceitas(inicio, fim);
     };
-    
     dataInicio.addEventListener('change', atualizarRelatorios);
     dataFim.addEventListener('change', atualizarRelatorios);
   }
 }
-
 // Verifica se há contas a pagar próximas ao vencimento
 function verificarAlertasContas() {
   if (window.cartoesModule && typeof window.cartoesModule.verificarContasPendentes === 'function') {
     window.cartoesModule.verificarContasPendentes();
   }
 }
-
 // Exportar módulo
 const relatoriosModule = {
   inicializar: inicializarRelatorios,
@@ -740,6 +629,5 @@ const relatoriosModule = {
   verificarAlertasContas: verificarAlertasContas,
   obterTransacoesFiltradas: () => transacoesFiltradas
 };
-
 // Exportar o módulo globalmente
 window.relatoriosModule = relatoriosModule; 
