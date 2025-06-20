@@ -570,20 +570,8 @@ function salvarCartao() {
       botaoSalvar.textContent = 'Salvando...';
     }
     
-    // Fazer requisição
-    fetch('http://localhost:3030/api/cartoes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(dados)
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-      }
-      return response.json();
-    })
+    // Fazer requisição usando a API
+    api.criarCartao(dados)
     .then(resultado => {
       console.log('✅ Cartão criado:', resultado);
       
