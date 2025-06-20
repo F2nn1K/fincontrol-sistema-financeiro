@@ -41,7 +41,6 @@ async function inicializarAplicacao() {
       });
     }, 500);
   } catch (error) {
-    console.error('Erro ao inicializar aplicação:', error);
   }
 }
 
@@ -193,7 +192,6 @@ function configurarEventosTipoTransacao() {
   const transacaoTipo = document.getElementById('transacao-tipo');
   
   if (!tipoEntradaRadio || !tipoSaidaRadio || !transacaoTipo) {
-    console.warn('Elementos de tipo de transação não encontrados');
     return;
   }
   
@@ -230,7 +228,6 @@ function configurarEventosTipoCategoria() {
   const categoriaTipo = document.getElementById('categoria-tipo');
   
   if (!categoriaEntradaRadio || !categoriaSaidaRadio || !categoriaTipo) {
-    console.warn('Elementos de tipo de categoria não encontrados');
     return;
   }
   
@@ -257,7 +254,6 @@ function configurarBotoesRelatorios() {
   const btnFiltrar = document.getElementById('btn-filtrar');
   
   if (!btnImprimir && !btnExportar && !btnFiltrar) {
-    console.warn('Botões de relatórios não encontrados');
     return;
   }
   
@@ -352,7 +348,6 @@ function exportarRelatorios() {
       notificar('Exportação', 'Relatório exportado com sucesso!', 'success');
     }, 500);
   } catch (error) {
-    console.error('Erro ao exportar relatórios:', error);
     notificar('Erro', 'Falha ao exportar relatório: ' + error.message, 'danger');
   }
 }
@@ -423,7 +418,6 @@ function verificarAlertas() {
   const semAlertas = document.getElementById('sem-alertas');
   
   if (!alertasContainer || !contadorAlertas || !listaAlertas) {
-    console.warn('Elementos de alertas não encontrados');
     return;
   }
   
@@ -517,7 +511,6 @@ window.app = {
     if (typeof window.mostrarPagina === 'function') {
       window.mostrarPagina(pageName);
     } else {
-      console.error('Função mostrarPagina não disponível');
       // Alternativa
       const link = document.querySelector(`[data-page="${pageName}"]`);
       if (link) link.click();

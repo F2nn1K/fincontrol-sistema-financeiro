@@ -26,7 +26,6 @@ let categoriasSaida = [];
 function inicializarTransacoes() {
   // Verificar se os elementos existem antes de configurar
   if (!transacoesTable && !ultimasTransacoesTable) {
-    console.error('Elementos de tabela de transações não encontrados');
     return;
   }
   carregarTransacoes();
@@ -56,7 +55,6 @@ async function carregarTransacoes() {
       window.relatoriosModule.atualizarGraficos();
     }
   } catch (error) {
-    console.error('Erro ao carregar transações:', error);
     notificar('Erro', `Falha ao carregar transações: ${error.message}`, 'danger');
   }
 }
@@ -74,7 +72,6 @@ async function carregarCategorias() {
     preencherFiltroCategoria();
     atualizarCategoriasVisiveisNoForm();
   } catch (error) {
-    console.error('❌ Erro ao carregar categorias:', error);
     notificar('Erro', `Falha ao carregar categorias: ${error.message}`, 'danger');
   }
 }
@@ -83,7 +80,6 @@ function renderizarTransacoes() {
   if (!transacoesTable) return;
   const tbody = transacoesTable.querySelector('tbody');
   if (!tbody) {
-    console.error('Tabela de transações não possui tbody');
     return;
   }
   tbody.innerHTML = '';
@@ -152,7 +148,6 @@ function renderizarUltimasTransacoes() {
   if (!ultimasTransacoesTable) return;
   const tbody = ultimasTransacoesTable.querySelector('tbody');
   if (!tbody) {
-    console.error('Tabela de últimas transações não possui tbody');
     return;
   }
   tbody.innerHTML = '';
@@ -304,7 +299,6 @@ async function atualizarCategoriasVisiveisNoForm() {
     tipoSelecionado = transacaoTipo.value;
     categorias = transacaoTipo.value === 'entrada' ? (categoriasEntrada || []) : (categoriasSaida || []);
   } else {
-    console.error('❌ Não foi possível determinar o tipo de transação');
     return;
   }
   // Adicionar opções
@@ -420,7 +414,6 @@ async function editarTransacao(id) {
       transacaoModal.show();
     }
   } catch (error) {
-    console.error('Erro ao editar transação:', error);
     notificar('Erro', `Falha ao editar transação: ${error.message}`, 'danger');
   }
 }
@@ -506,7 +499,6 @@ async function salvarTransacao() {
           // Garantir que o formulário seja limpo após salvar
           setTimeout(() => limparFormularioCompleto(), 100);
         } catch (error) {
-          console.error('Erro ao fechar modal:', error);
           // Tentar fechar o modal via Bootstrap
           const modalEl = document.getElementById('transacaoModal');
           if (modalEl) {
@@ -552,7 +544,6 @@ async function salvarTransacao() {
             if (dashboardLink) dashboardLink.click();
           }
         } catch (error) {
-          console.error('Erro ao navegar para dashboard:', error);
           // Último recurso: reload da página
           window.location.hash = '#dashboard';
         }
@@ -562,7 +553,6 @@ async function salvarTransacao() {
       if (document.body.contains(loadingOverlay)) {
         document.body.removeChild(loadingOverlay);
       }
-      console.error('Erro na comunicação com API:', error);
                       // Usar APENAS o alerta bonito de erro
         if (window.mostrarAlertaErro) {
           window.mostrarAlertaErro(`Erro ao salvar transação: ${error.message}`);
@@ -574,7 +564,6 @@ async function salvarTransacao() {
       }
     }
   } catch (error) {
-    console.error('Erro ao processar dados da transação:', error);
                     // Usar APENAS o alerta bonito de erro
         if (window.mostrarAlertaErro) {
           window.mostrarAlertaErro(`Erro ao salvar: ${error.message}`);
@@ -606,7 +595,6 @@ async function excluirTransacao(id) {
     // Recarregar transações
     await carregarTransacoes();
   } catch (error) {
-    console.error('Erro ao excluir transação:', error);
     notificar('Erro', `Falha ao excluir transação: ${error.message}`, 'danger');
   }
 }
@@ -686,7 +674,6 @@ function configurarEventListeners() {
       salvarTransacao();
     });
   } else {
-    console.warn('Formulário de transação não encontrado no DOM');
   }
   // Ao clicar no botão de salvar
   if (salvarTransacaoBtn) {
@@ -695,7 +682,6 @@ function configurarEventListeners() {
       salvarTransacao();
     });
   } else {
-    console.warn('Botão de salvar transação não encontrado no DOM');
   }
   // Eventos para o campo de valor (formatação)
   if (transacaoValor) {
@@ -710,7 +696,6 @@ function configurarEventListeners() {
       setTimeout(() => formatarCampoValor(e), 10);
     });
   } else {
-    console.error('❌ Campo transacao-valor não encontrado!');
   }
   // Eventos para os radio buttons de tipo
   if (tipoEntradaRadio && tipoSaidaRadio) {
@@ -796,7 +781,6 @@ function configurarEventListeners() {
           });
         }
       } catch (error) {
-        console.error('💥 Erro ao carregar categorias:', error);
       }
       // Focar no primeiro campo ao abrir o modal
       if (transacaoDescricao) transacaoDescricao.focus();
@@ -851,7 +835,6 @@ async function carregarEPreencherCategorias() {
     // Preencher dropdown AGORA
     const select = document.getElementById('transacao-categoria');
     if (!select) {
-      console.error('❌ SELECT NÃO ENCONTRADO!');
       return;
     }
     // Limpar
@@ -873,7 +856,6 @@ async function carregarEPreencherCategorias() {
     });
     return true;
   } catch (error) {
-    console.error('💥 ERRO:', error);
     return false;
   }
 }
@@ -881,7 +863,6 @@ async function carregarEPreencherCategorias() {
 function preencherDropdownCategorias() {
   const select = document.getElementById('transacao-categoria');
   if (!select) {
-    console.error('❌ Select de categorias não encontrado!');
     return;
   }
   // Limpar dropdown
@@ -896,7 +877,6 @@ function preencherDropdownCategorias() {
   // Selecionar categorias corretas
   const categorias = tipoSelecionado === 'entrada' ? categoriasEntrada : categoriasSaida;
   if (!categorias || categorias.length === 0) {
-    console.warn('⚠️ Nenhuma categoria encontrada para o tipo:', tipoSelecionado);
     return;
   }
   // Adicionar opções

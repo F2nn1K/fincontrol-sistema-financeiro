@@ -117,7 +117,6 @@ async function carregarCartoes() {
   try {
     // Verificar se a função existe no objeto api
     if (typeof api.obterCartoes !== 'function') {
-      console.error('❌ Função api.obterCartoes não está disponível');
       return [];
     }
     // Obter cartões da API
@@ -136,7 +135,6 @@ async function carregarCartoes() {
     preencherFiltroCartoes();
     return cartoes;
   } catch (error) {
-    console.error('❌ Erro ao carregar cartões:', error);
     return [];
   }
 }
@@ -144,7 +142,6 @@ async function carregarCartoes() {
 function renderizarCartoes() {
   const container = document.getElementById('cartoes-container');
   if (!container) {
-    console.error('❌ Container cartoes-container não encontrado!');
     return;
   }
   // Limpar container
@@ -313,7 +310,6 @@ function novaCompra(cartaoId = null) {
   const botaoSalvar = document.getElementById('salvar-compra');
   if (botaoSalvar) {
   } else {
-    console.error('❌ Botão salvar-compra NÃO encontrado no modal');
   }
   // Abrir o modal
   const compraModal = new bootstrap.Modal(document.getElementById('compraParceladaModal'));
@@ -452,7 +448,6 @@ function salvarCartao() {
       carregarCartoes();
     })
     .catch(error => {
-      console.error('❌ Erro:', error);
       mostrarAlerta(error.message, 'danger');
     })
     .finally(() => {
@@ -463,7 +458,6 @@ function salvarCartao() {
       }
     });
   } catch (error) {
-    console.error('❌ Erro geral:', error);
     mostrarAlerta('Erro: ' + error.message, 'danger');
   }
 }
@@ -523,7 +517,6 @@ function gerenciarParcelasPersonalizadas() {
   const compraParcelas = document.getElementById('compra-parcelas');
   const parcelasDiv = document.getElementById('parcelas-personalizadas');
   if (!compraParcelas || !parcelasDiv) {
-    console.error('❌ Elementos não encontrados:', {
       compraParcelas: !!compraParcelas,
       parcelasDiv: !!parcelasDiv
     });
@@ -617,7 +610,6 @@ async function excluirCartao(id) {
     notificar('Sucesso', 'Cartão excluído com sucesso', 'success');
     await carregarCartoes();
   } catch (error) {
-    console.error('❌ Erro ao excluir cartão:', error);
     // Verificar se o erro é devido a parcelas pendentes
     if (error.message && (error.message.includes('parcelas pendentes') || error.message.includes('parcelasPendentes'))) {
       notificar('Erro', 'Não é possível excluir o cartão pois existem parcelas pendentes', 'danger');
@@ -673,7 +665,6 @@ async function carregarParcelas() {
             }
           }
         } catch (err) {
-          console.error(`❌ Erro ao carregar parcelas do cartão ${cartao.id}:`, err);
         }
       }
     }
@@ -683,7 +674,6 @@ async function carregarParcelas() {
     atualizarLimitesCartoes();
     return parcelas;
   } catch (error) {
-    console.error('❌ Erro ao carregar parcelas:', error);
     return [];
   } finally {
     // Liberar flag de carregamento
@@ -695,13 +685,11 @@ function renderizarParcelas() {
   const tabela = document.getElementById('tabela-parcelas');
   const filtro = document.getElementById('filtro-cartao');
   if (!tabela) {
-    console.error('❌ Tabela de parcelas não encontrada');
     return;
   }
   // Limpar corpo da tabela
   const tbody = tabela.querySelector('tbody');
   if (!tbody) {
-    console.error('❌ Tbody da tabela não encontrado');
     return;
   }
   tbody.innerHTML = '';
@@ -796,7 +784,6 @@ async function pagarParcela(id) {
     // Atualizar alertas
     verificarContasPendentes();
   } catch (error) {
-    console.error('Erro ao pagar parcela:', error);
     notificar('Erro', `Falha ao pagar parcela: ${error.message}`, 'danger');
   }
 }
@@ -816,7 +803,6 @@ function confirmarExclusaoParcela(id) {
     }
     confirmDialog.show(mensagem, () => excluirParcela(id));
   } catch (error) {
-    console.error('❌ Erro ao mostrar confirmação:', error);
     // Fallback para confirm do navegador
     if (confirm('Deseja realmente excluir esta compra e todas as suas parcelas? Esta ação não pode ser desfeita.')) {
       excluirParcela(id);
@@ -829,7 +815,6 @@ async function excluirParcela(id) {
     // Encontrar a compra associada à parcela
     const parcela = parcelas.find(p => p.id == id);
     if (!parcela) {
-      console.error('❌ Parcela não encontrada:', id);
       if (typeof notificar === 'function') {
         notificar('Erro', 'Parcela não encontrada', 'danger');
       } else {
@@ -856,7 +841,6 @@ async function excluirParcela(id) {
     // Atualizar alertas
     verificarContasPendentes();
   } catch (error) {
-    console.error('❌ Erro ao excluir parcela:', error);
     if (typeof notificar === 'function') {
       notificar('Erro', `Falha ao excluir parcela: ${error.message}`, 'danger');
     } else {
@@ -970,7 +954,6 @@ function configurarEventListeners() {
   const salvarCartaoBtn = document.getElementById('salvar-cartao');
   if (salvarCartaoBtn) {
   } else {
-    console.warn('⚠️ Botão salvar-cartao não encontrado');
   }
   // Botão de salvar compra
   const salvarCompraBtn = document.getElementById('salvar-compra');
@@ -982,7 +965,6 @@ function configurarEventListeners() {
       salvarCompra();
     });
   } else {
-    console.warn('⚠️ Botão salvar-compra não encontrado');
   }
   // Botões de adicionar compra
   const adicionarCompraBtns = document.querySelectorAll('[data-action="adicionar-compra"]');
@@ -1058,7 +1040,6 @@ function novoCartao() {
     if (modalLabel) {
       modalLabel.textContent = 'Novo Cartão de Crédito';
     } else {
-      console.warn('⚠️ Elemento cartaoModalLabel não encontrado');
     }
     // Definir valores padrão
     if (cartaoFechamento) {
@@ -1078,7 +1059,6 @@ function novoCartao() {
         }
       }, 300);
     } else {
-      console.error('❌ Modal do cartão não foi inicializado');
       // Fallback: tentar inicializar o modal agora
       const modalElement = document.getElementById('cartaoModal');
       if (modalElement) {
@@ -1092,11 +1072,9 @@ function novoCartao() {
           }
         }, 300);
       } else {
-        console.error('❌ Elemento cartaoModal não encontrado no DOM');
       }
     }
   } catch (error) {
-    console.error('❌ Erro na função novoCartao():', error);
   }
 }
 // Confirma a exclusão de um cartão
@@ -1178,7 +1156,6 @@ async function salvarCompra() {
     // Verificar se o formulário é válido
     const form = document.getElementById('compra-form');
     if (!form) {
-      console.error('❌ Formulário compra-form não encontrado');
       alert('Erro: Formulário não encontrado');
       return;
     }
@@ -1293,12 +1270,10 @@ async function salvarCompra() {
         // Apenas recarregar parcelas (que já atualiza os limites)
         await carregarParcelas();
       } catch (reloadError) {
-        console.error('❌ Erro ao recarregar dados:', reloadError);
         // Não propagar o erro para não afetar a interface
       }
     }, 200);
   } catch (error) {
-    console.error('❌ Erro ao salvar compra:', error);
     // Desbloquear interface em caso de erro também
     desbloquearInterface();
     if (typeof notificar === 'function') {

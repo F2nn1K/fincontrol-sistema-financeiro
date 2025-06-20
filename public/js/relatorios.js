@@ -56,7 +56,6 @@ function atualizarGraficos() {
     // Carregar gráfico de categorias
     carregarGraficoCategorias('despesas'); // Começa mostrando despesas
   } catch (error) {
-    console.error('Erro ao atualizar gráficos:', error);
     // Não exibir notificação para o usuário, apenas logar no console
   }
 }
@@ -97,7 +96,6 @@ async function carregarResumo() {
         }
       }
     } catch (error) {
-      console.error('Erro ao obter resumo da API:', error);
       // Manter valores padrão
     }
     // Atualizar elementos na tela
@@ -113,7 +111,6 @@ async function carregarResumo() {
       resumoSaldo.classList.add('text-primary');
     }
   } catch (error) {
-    console.error('Erro ao carregar resumo:', error);
     // Valores padrão em caso de falha
     if (resumoEntradas) resumoEntradas.textContent = formatarMoeda(4500);
     if (resumoSaidas) resumoSaidas.textContent = formatarMoeda(3200);
@@ -175,7 +172,6 @@ async function carregarGraficoCategorias(tipo) {
     // Se não encontrou dados, mostrar mensagem vazia
     criarGrafico([], tipo);
   } catch (error) {
-    console.error('Erro ao carregar gráfico de categorias:', error);
     // Criar gráfico vazio com mensagem de erro
     criarGrafico([], tipo);
   }
@@ -233,7 +229,6 @@ function processarDadosParaGrafico(transacoes, tipo) {
     });
     return dadosProcessados;
   } catch (error) {
-    console.error('Erro ao processar dados para gráfico:', error);
     return [];
   }
 }
@@ -267,7 +262,6 @@ function prepararDadosGrafico(dados, limite = 5) {
     }
     return dadosOrdenados;
   } catch (error) {
-    console.error('Erro ao preparar dados para gráfico:', error);
     return dados || []; // Retornar os dados originais em caso de erro
   }
 }
@@ -322,7 +316,6 @@ function criarGrafico(dados, tipo) {
     // Obter o contexto do canvas
     const ctx = document.getElementById('grafico-categorias');
     if (!ctx) {
-      console.error('Elemento "grafico-categorias" não encontrado');
       return; // Sair da função se o elemento não existir
     }
     // Destruir o gráfico existente, se houver
@@ -361,7 +354,6 @@ function criarGrafico(dados, tipo) {
       }
     });
   } catch (error) {
-    console.error('Erro ao renderizar gráfico:', error);
     // Tentar mostrar uma mensagem de erro
     const elemento = document.getElementById('grafico-categorias');
     if (elemento) {

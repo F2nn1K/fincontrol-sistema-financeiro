@@ -20,7 +20,6 @@ let categoriasSaidaList = [];
 function inicializarCategorias() {
   // Verificar se os elementos existem antes de configurar
   if (!categoriasContainer) {
-    console.error('❌ Elementos de categorias não encontrados');
     return;
   }
   carregarCategorias();
@@ -39,7 +38,6 @@ async function carregarCategorias() {
     renderizarCategorias();
     return { entrada: categoriasEntradaList, saida: categoriasSaidaList };
   } catch (error) {
-    console.error('Erro ao carregar categorias:', error);
     return { entrada: [], saida: [] };
   }
 }
@@ -49,7 +47,6 @@ function renderizarCategorias() {
   const categoriasEntradaListEl = document.getElementById('lista-categorias-entrada');
   const categoriasSaidaListEl = document.getElementById('lista-categorias-saida');
   if (!categoriasEntradaListEl || !categoriasSaidaListEl) {
-    console.error('Elementos de lista de categorias não encontrados');
     return;
   }
   // Lista de entradas
@@ -180,7 +177,6 @@ function editarCategoria(id) {
       categoriaModal.show();
     }
   } catch (error) {
-    console.error('Erro ao editar categoria:', error);
     notificar('Erro', `Falha ao editar categoria: ${error.message}`, 'danger');
   }
 }
@@ -227,9 +223,6 @@ async function salvarCategoria() {
       window.transacoesModule.atualizarCategoriasVisiveisNoForm();
     }
   } catch (error) {
-    console.error('❌ Erro ao salvar categoria:', error);
-    console.error('❌ Stack trace:', error.stack);
-    console.error('❌ Detalhes do erro:', {
       message: error.message,
       name: error.name,
       response: error.response
@@ -256,7 +249,6 @@ async function excluirCategoria(id) {
       window.transacoesModule.atualizarCategoriasVisiveisNoForm();
     }
   } catch (error) {
-    console.error('Erro ao excluir categoria:', error);
     notificar('Erro', `Falha ao excluir categoria: ${error.message}`, 'danger');
   }
 }
@@ -284,7 +276,6 @@ function limparFormulario() {
 function configurarEventListeners() {
   // Validar se os elementos existem
   if (!salvarCategoriaBtn || !categoriasForm) {
-    console.error('❌ Elementos de formulário não encontrados:', {
       salvarCategoriaBtn: !!salvarCategoriaBtn,
       categoriasForm: !!categoriasForm
     });

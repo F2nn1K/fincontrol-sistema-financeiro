@@ -737,20 +737,20 @@
       
       if (modal) {
               modal.addEventListener('shown.bs.modal', async function() {
-        console.log('🔥 CARREGANDO CATEGORIAS DIRETO!');
+
         
         try {
           // Buscar categorias da API
           const response = await fetch('/api/categorias');
           const categorias = await response.json();
           
-          console.log('📊 Categorias recebidas:', categorias);
+
           
           // Separar por tipo
           const entrada = categorias.filter(c => c.tipo === 'entrada');
           const saida = categorias.filter(c => c.tipo === 'saida');
           
-          console.log('✅ Entrada:', entrada.length, 'Saída:', saida.length);
+
           
           // Preencher dropdown
           const select = document.getElementById('transacao-categoria');
@@ -773,7 +773,7 @@
               select.appendChild(option);
             });
             
-            console.log('🎉 DROPDOWN PREENCHIDO COM', categoriasUsar.length, 'CATEGORIAS!');
+
             
             // Event listeners para radio buttons
             if (tipoEntrada) {
@@ -786,7 +786,7 @@
                     option.textContent = cat.nome;
                     select.appendChild(option);
                   });
-                  console.log('🔄 Mudou para ENTRADA');
+
                 }
               });
             }
@@ -801,13 +801,13 @@
                     option.textContent = cat.nome;
                     select.appendChild(option);
                   });
-                  console.log('🔄 Mudou para SAÍDA');
+
                 }
               });
             }
           }
         } catch (error) {
-          console.error('💥 Erro:', error);
+          // Erro silencioso em produção
         }
       });
       
@@ -911,11 +911,11 @@
       setTimeout(() => {
         const campoValor = document.getElementById('transacao-valor');
         if (campoValor) {
-          console.log('🎯 Configurando formatação direta no HTML');
+
           
           function formatarValorDireto(e) {
             const el = e.target;
-            console.log('🔥 Formatando valor direto:', el.value);
+
             
             // Remover tudo que não é dígito
             let numeros = el.value.replace(/\D/g, '');
@@ -936,7 +936,7 @@
             partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
             formatado = partes.join(',');
             
-            console.log('✅ Valor formatado direto:', formatado);
+
             el.value = formatado;
             
             // Cursor no final
@@ -954,14 +954,12 @@
             setTimeout(() => formatarValorDireto(e), 10);
           });
           
-          console.log('✅ Formatação direta configurada');
-        } else {
-          console.error('❌ Campo transacao-valor não encontrado no HTML!');
-        }
+
+                  }
       }, 1000);
       
       // FORMATAÇÃO REMOVIDA - DEIXAR USUÁRIO DIGITAR LIVREMENTE
-      console.log('✅ Formatação automática de cartões DESABILITADA - usuário digita livremente');
+
       
       // Função global REMOVIDA - sem formatação automática
       window.formatarValorCartaoHTML = function(e) {
