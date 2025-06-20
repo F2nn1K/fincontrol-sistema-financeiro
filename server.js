@@ -10,8 +10,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     console.error('Erro ao conectar ao banco de dados:', err.message);
   } else {
-    console.log('Conectado ao banco de dados SQLite');
-    
     // Criar tabela de transações se não existir
     db.run(`CREATE TABLE IF NOT EXISTS transacoes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,8 +23,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
     )`, (err) => {
       if (err) {
         console.error('Erro ao criar tabela:', err.message);
-      } else {
-        console.log('Tabela de transações verificada/criada com sucesso');
       }
     });
     
@@ -39,8 +35,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
       if (err) {
         console.error('Erro ao criar tabela:', err.message);
       } else {
-        console.log('Tabela de categorias verificada/criada com sucesso');
-        
         // Inserir categorias padrão se não existirem
         const categoriasPadrao = [
           { nome: 'Salário', tipo: 'entrada' },
@@ -75,8 +69,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
     )`, (err) => {
       if (err) {
         console.error('Erro ao criar tabela de cartões:', err.message);
-      } else {
-        console.log('Tabela de cartões verificada/criada com sucesso');
       }
     });
     
@@ -94,8 +86,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
     )`, (err) => {
       if (err) {
         console.error('Erro ao criar tabela de compras:', err.message);
-      } else {
-        console.log('Tabela de compras verificada/criada com sucesso');
       }
     });
     
@@ -113,8 +103,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
     )`, (err) => {
       if (err) {
         console.error('Erro ao criar tabela de parcelas:', err.message);
-      } else {
-        console.log('Tabela de parcelas verificada/criada com sucesso');
       }
     });
   }
@@ -168,7 +156,7 @@ app.use((err, req, res, next) => {
 
 // Iniciar servidor
 const server = app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  // ... existing code ...
 });
 
 // Tratamento de erros do servidor

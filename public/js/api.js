@@ -2,12 +2,11 @@
  * API para comunicação com o backend
  */
 
-// URL base da API
-const API_URL = '/api';
+// Configuração da API
+const API_URL = window.location.origin;
 
-// Debug da URL
-console.log('🌐 URL atual:', window.location.href);
-console.log('🔗 API URL:', API_URL);
+// Debug mode
+window.modoDebug = false;
 
 // Funções de API para transações
 const api = {
@@ -193,7 +192,4 @@ const api = {
 };
 
 // Exportar globalmente
-window.api = api;
-
-// Log de inicialização
-console.log('✅ API carregada com sucesso'); 
+window.api = api; 

@@ -177,11 +177,9 @@ exports.criarCompra = (req, res) => {
         let valoresParcelas;
         if (valores_personalizados && Array.isArray(valores_personalizados) && valores_personalizados.length === parseInt(parcelas)) {
           valoresParcelas = valores_personalizados;
-          console.log('💰 Usando valores personalizados das parcelas');
         } else {
           const valorParcela = parseFloat((valor / parcelas).toFixed(2));
           valoresParcelas = new Array(parseInt(parcelas)).fill(valorParcela);
-          console.log('💰 Distribuindo valor igualmente entre as parcelas');
         }
         
         let dataCompra = new Date(data);
@@ -338,8 +336,6 @@ exports.atualizarCompra = (req, res) => {
 exports.excluirCompra = (req, res) => {
   const { id } = req.params;
   
-  console.log(`🗑️ Excluindo compra com ID: ${id}`);
-  
   // Iniciar transação
   db.serialize(() => {
     db.run('BEGIN TRANSACTION');
@@ -352,8 +348,6 @@ exports.excluirCompra = (req, res) => {
         return res.status(500).json({ erro: err.message });
       }
       
-      console.log('✅ Parcelas excluídas com sucesso');
-      
       // Excluir a compra
       db.run(`DELETE FROM compras WHERE id = ?`, [id], function (err) {
         if (err) {
@@ -363,12 +357,10 @@ exports.excluirCompra = (req, res) => {
         }
         
         if (this.changes === 0) {
-          console.log('⚠️ Compra não encontrada');
           db.run('ROLLBACK');
           return res.status(404).json({ mensagem: "Compra não encontrada" });
         }
         
-        console.log('✅ Compra excluída com sucesso');
         db.run('COMMIT');
         res.json({ mensagem: "Compra excluída com sucesso" });
       });

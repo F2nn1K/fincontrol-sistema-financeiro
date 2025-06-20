@@ -7,17 +7,11 @@ const options = {
   method: 'GET'
 };
 
-console.log('Testando conexão com o servidor...');
-
 const req = http.request(options, (res) => {
-  console.log(`Status: ${res.statusCode}`);
-  
   res.on('data', (chunk) => {
-    console.log('Recebendo dados do servidor');
   });
   
   res.on('end', () => {
-    console.log('Conexão bem-sucedida!');
     process.exit(0);
   });
 });

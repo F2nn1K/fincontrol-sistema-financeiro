@@ -17,8 +17,6 @@ async function inicializarAplicacao() {
     window.modoDebug = false;
   }
   
-  if (window.modoDebug) console.log('Inicializando aplicação...');
-  
   try {
     // Inicializar componentes
     configurarNavegacao();
@@ -42,8 +40,6 @@ async function inicializarAplicacao() {
         }
       });
     }, 500);
-    
-    if (window.modoDebug) console.log('Aplicação inicializada com sucesso');
   } catch (error) {
     console.error('Erro ao inicializar aplicação:', error);
   }
@@ -53,7 +49,6 @@ async function inicializarAplicacao() {
  * Configura a navegação entre páginas
  */
 function configurarNavegacao() {
-  if (window.modoDebug) console.log('Configurando navegação...');
   
   // Configurar links do menu principal
   const nav = document.querySelector('nav');
@@ -110,7 +105,6 @@ function configurarNavegacao() {
  * Navega para uma página específica
  */
 function navegarParaPagina(pagina) {
-  if (window.modoDebug) console.log(`Navegando para a página: ${pagina}`);
   
   // Atualizar URL
   window.history.pushState({}, '', `?page=${pagina}`);
@@ -171,30 +165,24 @@ window.mostrarPagina = async function(pagina) {
  * Inicializa os módulos da aplicação
  */
 async function inicializarModulos() {
-  if (window.modoDebug) console.log('Inicializando módulos...');
-  
   // Inicializar módulo de transações
   if (typeof window.transacoesModule !== 'undefined' && window.transacoesModule.inicializar) {
     window.transacoesModule.inicializar();
-    if (window.modoDebug) console.log('Módulo de transações inicializado');
   }
   
   // Inicializar módulo de categorias
   if (typeof window.categoriasModule !== 'undefined' && window.categoriasModule.inicializar) {
     window.categoriasModule.inicializar();
-    if (window.modoDebug) console.log('Módulo de categorias inicializado');
   }
   
   // Inicializar módulo de relatórios
   if (typeof window.relatoriosModule !== 'undefined' && window.relatoriosModule.inicializar) {
     window.relatoriosModule.inicializar();
-    if (window.modoDebug) console.log('Módulo de relatórios inicializado');
   }
   
   // Inicializar módulo de cartões
   if (typeof window.cartoesModule !== 'undefined' && window.cartoesModule.inicializar) {
     window.cartoesModule.inicializar();
-    if (window.modoDebug) console.log('Módulo de cartões inicializado');
   }
 }
 
@@ -209,7 +197,7 @@ function configurarEventosTipoTransacao() {
     return;
   }
   
-  console.log('Configurando eventos de tipo de transação');
+
   
   // Quando um radio é alterado, atualizar o select hidden
   tipoEntradaRadio.addEventListener('change', () => {
@@ -246,7 +234,7 @@ function configurarEventosTipoCategoria() {
     return;
   }
   
-  console.log('Configurando eventos de tipo de categoria');
+
   
   // Quando um radio é alterado, atualizar o select hidden
   categoriaEntradaRadio.addEventListener('change', () => {
@@ -273,7 +261,7 @@ function configurarBotoesRelatorios() {
     return;
   }
   
-  console.log('Configurando botões de relatórios');
+
   
   if (btnImprimir) {
     btnImprimir.addEventListener('click', () => {
@@ -371,7 +359,6 @@ function exportarRelatorios() {
 
 // Configura event listeners para os botões de ação globais
 function configurarEventListenersGlobais() {
-  console.log('Configurando event listeners globais');
   
   // Botões para abrir o modal de nova categoria
   const novaCategoriaButtons = document.querySelectorAll('[data-bs-target="#categoriaModal"]');
@@ -429,7 +416,6 @@ function configurarEventListenersGlobais() {
 
 // Verificar alertas de contas a pagar ou outras notificações importantes
 function verificarAlertas() {
-  console.log('Verificando alertas...');
   
   const alertasContainer = document.getElementById('alertas-container');
   const contadorAlertas = document.getElementById('contador-alertas');
