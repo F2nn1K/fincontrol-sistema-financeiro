@@ -1,4 +1,4 @@
-# 💰 FinControl - Sistema de Gestão Financeira
+# 💰 Controle Elisiane - Sistema de Gestão Financeira
 
 Sistema completo de controle financeiro pessoal com gestão de cartões de crédito, transações e relatórios.
 
