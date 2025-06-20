@@ -3,7 +3,9 @@
  */
 
 // Configuração da API
-const API_URL = `${window.location.origin}/api`;
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+  ? `${window.location.origin}/api` 
+  : `${window.location.origin}/api`;
 
 // Debug mode
 window.modoDebug = false;
