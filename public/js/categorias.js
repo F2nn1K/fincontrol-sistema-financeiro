@@ -223,10 +223,6 @@ async function salvarCategoria() {
       window.transacoesModule.atualizarCategoriasVisiveisNoForm();
     }
   } catch (error) {
-      message: error.message,
-      name: error.name,
-      response: error.response
-    });
     notificar('Erro', `Falha ao salvar categoria: ${error.message}`, 'danger');
   }
 }
@@ -276,9 +272,6 @@ function limparFormulario() {
 function configurarEventListeners() {
   // Validar se os elementos existem
   if (!salvarCategoriaBtn || !categoriasForm) {
-      salvarCategoriaBtn: !!salvarCategoriaBtn,
-      categoriasForm: !!categoriasForm
-    });
     return;
   }
   // Ao submeter o formulário

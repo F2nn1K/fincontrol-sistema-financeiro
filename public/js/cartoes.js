@@ -517,9 +517,6 @@ function gerenciarParcelasPersonalizadas() {
   const compraParcelas = document.getElementById('compra-parcelas');
   const parcelasDiv = document.getElementById('parcelas-personalizadas');
   if (!compraParcelas || !parcelasDiv) {
-      compraParcelas: !!compraParcelas,
-      parcelasDiv: !!parcelasDiv
-    });
     return;
   }
   const numParcelas = parseInt(compraParcelas.value) || 1;
