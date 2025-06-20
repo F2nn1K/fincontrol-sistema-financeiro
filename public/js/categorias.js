@@ -18,24 +18,6 @@ let categoriasEntradaList = [];
 let categoriasSaidaList = [];
 // Inicialização
 function inicializarCategorias() {
-  // Debug dos elementos
-    categoriasContainer: !!categoriasContainer,
-    categoriasForm: !!categoriasForm,
-    categoriaModal: !!categoriaModal,
-    categoriaId: !!categoriaId,
-    categoriaNome: !!categoriaNome,
-    categoriaTipo: !!categoriaTipo,
-    categoriaEntradaRadio: !!categoriaEntradaRadio,
-    categoriaSaidaRadio: !!categoriaSaidaRadio,
-    salvarCategoriaBtn: !!salvarCategoriaBtn
-  });
-  // Debug específico do botão salvar
-  const botaoSalvar = document.getElementById('salvar-categoria');
-    existe: !!botaoSalvar,
-    id: botaoSalvar?.id,
-    innerHTML: botaoSalvar?.innerHTML,
-    classList: botaoSalvar?.classList.toString()
-  });
   // Verificar se os elementos existem antes de configurar
   if (!categoriasContainer) {
     console.error('❌ Elementos de categorias não encontrados');
@@ -214,11 +196,6 @@ async function salvarCategoria() {
     // Construir objeto com os dados da categoria
     // Obter tipo (preferir radio buttons, fallback para o campo hidden)
     let tipo = 'entrada'; // valor padrão
-      categoriaEntradaRadio: !!categoriaEntradaRadio,
-      categoriaSaidaRadio: !!categoriaSaidaRadio,
-      entradaChecked: categoriaEntradaRadio?.checked,
-      saidaChecked: categoriaSaidaRadio?.checked
-    });
     if (categoriaEntradaRadio && categoriaSaidaRadio) {
       tipo = categoriaEntradaRadio.checked ? 'entrada' : 'saida';
     } else if (categoriaTipo) {

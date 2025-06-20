@@ -1214,14 +1214,6 @@ async function salvarCompra() {
           const totalPersonalizado = valorParcela * parcelas;
           // Log para acompanhar o parcelamento (juros são normais)
           const diferenca = Math.abs(totalPersonalizado - valor);
-          if (diferenca > 0.01) {
-              valorCompra: valor,
-              totalParcelas: totalPersonalizado,
-              valorParcela: valorParcela,
-              numParcelas: parcelas,
-              diferenca: diferenca
-            });
-          }
         }
       }
     }

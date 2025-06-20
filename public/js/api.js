@@ -3,7 +3,7 @@
  */
 
 // Configuração da API
-const API_URL = window.location.origin;
+const API_URL = `${window.location.origin}/api`;
 
 // Debug mode
 window.modoDebug = false;
